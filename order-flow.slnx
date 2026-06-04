@@ -1,0 +1,81 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/services/" />
+  <Folder Name="/services/BillingService/" />
+  <Folder Name="/services/BillingService/src/">
+    <Project Path="services/BillingService/src/BillingService.Api/BillingService.Api.csproj" />
+    <Project Path="services/BillingService/src/BillingService.Application/BillingService.Application.csproj" />
+    <Project Path="services/BillingService/src/BillingService.Contracts/BillingService.Contracts.csproj" />
+    <Project Path="services/BillingService/src/BillingService.Domain/BillingService.Domain.csproj" />
+    <Project Path="services/BillingService/src/BillingService.Infrastructure/BillingService.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/services/BillingService/tests/">
+    <Project Path="services/BillingService/tests/BillingService.UnitTests/BillingService.UnitTests.csproj" />
+  </Folder>
+  <Folder Name="/services/InventoryService/" />
+  <Folder Name="/services/InventoryService/src/">
+    <Project Path="services/InventoryService/src/InventoryService.Api/InventoryService.Api.csproj" />
+    <Project Path="services/InventoryService/src/InventoryService.Application/InventoryService.Application.csproj" />
+    <Project Path="services/InventoryService/src/InventoryService.Contracts/InventoryService.Contracts.csproj" />
+    <Project Path="services/InventoryService/src/InventoryService.Domain/InventoryService.Domain.csproj" />
+    <Project Path="services/InventoryService/src/InventoryService.Infrastructure/InventoryService.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/services/InventoryService/tests/">
+    <Project Path="services/InventoryService/tests/InventoryService.UnitTests/InventoryService.UnitTests.csproj" />
+  </Folder>
+  <Folder Name="/services/NotificationService/" />
+  <Folder Name="/services/NotificationService/src/">
+    <Project Path="services/NotificationService/src/NotificationService.Api/NotificationService.Api.csproj" />
+    <Project Path="services/NotificationService/src/NotificationService.Application/NotificationService.Application.csproj" />
+    <Project Path="services/NotificationService/src/NotificationService.Contracts/NotificationService.Contracts.csproj" />
+    <Project Path="services/NotificationService/src/NotificationService.Domain/NotificationService.Domain.csproj" />
+    <Project Path="services/NotificationService/src/NotificationService.Infrastructure/NotificationService.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/services/NotificationService/tests/">
+    <Project Path="services/NotificationService/tests/NotificationService.UnitTests/NotificationService.UnitTests.csproj" />
+  </Folder>
+  <Folder Name="/services/OrderService/" />
+  <Folder Name="/services/OrderService/src/">
+    <Project Path="services/OrderService/src/OrderService.Api/OrderService.Api.csproj" />
+    <Project Path="services/OrderService/src/OrderService.Application/OrderService.Application.csproj" />
+    <Project Path="services/OrderService/src/OrderService.Contracts/OrderService.Contracts.csproj" />
+    <Project Path="services/OrderService/src/OrderService.Domain/OrderService.Domain.csproj" />
+    <Project Path="services/OrderService/src/OrderService.Infrastructure/OrderService.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/services/OrderService/tests/">
+    <Project Path="services/OrderService/tests/OrderService.UnitTests/OrderService.UnitTests.csproj" />
+  </Folder>
+  <Folder Name="/services/ShippingService/" />
+  <Folder Name="/services/ShippingService/src/">
+    <Project Path="services/ShippingService/src/ShippingService.Api/ShippingService.Api.csproj" />
+    <Project Path="services/ShippingService/src/ShippingService.Application/ShippingService.Application.csproj" />
+    <Project Path="services/ShippingService/src/ShippingService.Contracts/ShippingService.Contracts.csproj" />
+    <Project Path="services/ShippingService/src/ShippingService.Domain/ShippingService.Domain.csproj" />
+    <Project Path="services/ShippingService/src/ShippingService.Infrastructure/ShippingService.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/services/ShippingService/tests/">
+    <Project Path="services/ShippingService/tests/ShippingService.UnitTests/ShippingService.UnitTests.csproj" />
+  </Folder>
+  <Folder Name="/shared/">
+    <Project Path="shared/Contracts/Contracts.csproj" />
+    <Project Path="shared/Messaging/Messaging.csproj" />
+    <Project Path="shared/Observability/Observability.csproj" />
+  </Folder>
+  <Folder Name="/shared/BuildingBlocks/" />
+  <Folder Name="/shared/BuildingBlocks/Api/">
+    <Project Path="shared/BuildingBlocks/Api/BuildingBlocks.Api.csproj" />
+  </Folder>
+  <Folder Name="/shared/BuildingBlocks/Application/">
+    <Project Path="shared/BuildingBlocks/Application/BuildingBlocks.Application.csproj" />
+  </Folder>
+  <Folder Name="/shared/BuildingBlocks/Domain/">
+    <Project Path="shared/BuildingBlocks/Domain/BuildingBlocks.Domain.csproj" />
+  </Folder>
+  <Folder Name="/shared/BuildingBlocks/Infrastructure/">
+    <Project Path="shared/BuildingBlocks/Infrastructure/BuildingBlocks.Infrastructure.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\InventoryService.Domain\InventoryService.Domain.csproj" />
+    <ProjectReference Include="..\InventoryService.Contracts\InventoryService.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\..\shared\BuildingBlocks\Application\BuildingBlocks.Application.csproj" />
+    <ProjectReference Include="..\..\..\..\shared\BuildingBlocks\Domain\BuildingBlocks.Domain.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>
