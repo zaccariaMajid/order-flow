@@ -11,6 +11,13 @@ public sealed class Order
     private readonly List<IDomainEvent> _domainEvents = [];
     private readonly List<OrderItem> _items;
 
+    private Order()
+    {
+        _items = [];
+        CustomerId = default;
+        TotalAmount = null!;
+    }
+
     private Order(Guid id, CustomerId customerId, List<OrderItem> items, Money totalAmount, DateTimeOffset createdAt)
     {
         Id = id;
@@ -21,17 +28,17 @@ public sealed class Order
         Status = OrderStatus.Pending;
     }
 
-    public Guid Id { get; }
+    public Guid Id { get; private set; }
 
-    public CustomerId CustomerId { get; }
+    public CustomerId CustomerId { get; private set; }
 
     public IReadOnlyCollection<OrderItem> Items => _items.AsReadOnly();
 
     public OrderStatus Status { get; private set; }
 
-    public Money TotalAmount { get; }
+    public Money TotalAmount { get; private set; }
 
-    public DateTimeOffset CreatedAt { get; }
+    public DateTimeOffset CreatedAt { get; private set; }
 
     public DateTimeOffset? CompletedAt { get; private set; }
 

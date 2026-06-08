@@ -4,6 +4,13 @@ namespace OrderService.Domain.Entities;
 
 public sealed class OrderItem
 {
+    private OrderItem()
+    {
+        ProductId = default;
+        ProductName = string.Empty;
+        UnitPrice = null!;
+    }
+
     private OrderItem(Guid id, ProductId productId, string productName, int quantity, Money unitPrice)
     {
         Id = id;
@@ -13,15 +20,15 @@ public sealed class OrderItem
         UnitPrice = unitPrice;
     }
 
-    public Guid Id { get; }
+    public Guid Id { get; private set; }
 
-    public ProductId ProductId { get; }
+    public ProductId ProductId { get; private set; }
 
-    public string ProductName { get; }
+    public string ProductName { get; private set; }
 
-    public int Quantity { get; }
+    public int Quantity { get; private set; }
 
-    public Money UnitPrice { get; }
+    public Money UnitPrice { get; private set; }
 
     public Money TotalPrice => UnitPrice.Multiply(Quantity);
 

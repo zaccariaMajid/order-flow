@@ -1,9 +1,11 @@
 using BuildingBlocks.Api;
+using OrderService.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 var serviceName = "OrderService";
 
 builder.Services.AddOpenApi();
+builder.Services.AddOrderInfrastructure(builder.Configuration);
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
