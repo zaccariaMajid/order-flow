@@ -9,3 +9,4 @@ TestResults/
 coverage/
 *.nupkg
 .DS_Store
+docker-compose.order-service.yml

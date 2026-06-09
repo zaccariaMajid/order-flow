@@ -1,25 +1,46 @@
 services:
-  postgres:
-    image: postgres:17
+  # postgres:
+  #   image: postgres:17
+  #   environment:
+  #     POSTGRES_USER: orderflow
+  #     POSTGRES_PASSWORD: orderflow
+  #     POSTGRES_DB: orderflow
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - postgres-data:/var/lib/postgresql/data
+
+  # rabbitmq:
+  #   image: rabbitmq:4-management
+  #   ports:
+  #     - "5672:5672"
+  #     - "15672:15672"
+
+  # redis:
+  #   image: redis:8
+  #   ports:
+  #     - "6379:6379"
+
+  order-service:
+    image: logistics/order-service:1.0.0
+    build:
+      context: .
+      dockerfile: services/OrderService/Dockerfile
     environment:
-      POSTGRES_USER: orderflow
-      POSTGRES_PASSWORD: orderflow
-      POSTGRES_DB: orderflow
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ASPNETCORE_URLS: "http://+:8080"
+      ConnectionStrings__OrderDb: ${ORDER_DB_CONNECTION_STRING}
+      # RabbitMq__Host: "rabbitmq"
+      # RabbitMq__Port: "5672"
+      # RabbitMq__Username: "guest"
+      # RabbitMq__Password: "guest"
+      # Redis__ConnectionString: "redis:6379"
     ports:
-      - "5432:5432"
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - "8080:8080"
+    # depends_on:
+    #   - postgres
+    #   - rabbitmq
+    #   - redis
 
-  rabbitmq:
-    image: rabbitmq:4-management
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-
-  redis:
-    image: redis:8
-    ports:
-      - "6379:6379"
-
-volumes:
-  postgres-data:
+# volumes:
+#   postgres-data:

@@ -16,7 +16,10 @@ if (app.Environment.IsDevelopment())
 app.MapGet("/", () => new ServiceInfo(serviceName, "Running"))
     .WithName("GetServiceInfo");
 
-app.MapGet("/health", () => Results.Ok(new ServiceInfo(serviceName, "Healthy")))
+app.MapGet("/health", () => Results.Ok(new { Status = "Healthy" }))
     .WithName("GetHealth");
+
+app.MapGet("/health/ready", () => Results.Ok(new { Status = "Healthy" }))
+    .WithName("GetReadiness");
 
 app.Run();
