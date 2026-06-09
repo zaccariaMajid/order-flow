@@ -19,7 +19,7 @@ app.MapGet("/", () => new ServiceInfo(serviceName, "Running"))
 app.MapGet("/health", () => Results.Ok(new { Status = "Healthy" }))
     .WithName("GetHealth");
 
-app.MapGet("/health/ready", () => Results.Ok(new { Status = "Healthy" }))
+app.MapGet("/health/ready", () => Results.Ok(new { Status = "Healthyyyy" }))
     .WithName("GetReadiness");
 
 app.Run();
