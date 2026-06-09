@@ -1,11 +1,26 @@
 name: docker
 
 on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
-  compose-config:
+  docker:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
     steps:
-      - uses: actions/checkout@v4
-      - run: docker compose config
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate Compose configuration
+        run: docker compose config
+
+      - name: Build OrderService image
+        run: docker build --file services/OrderService/Dockerfile --tag logistics/order-service:ci .

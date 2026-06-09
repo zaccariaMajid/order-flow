@@ -2,14 +2,29 @@ name: build
 
 on:
   push:
+    branches:
+      - main
   pull_request:
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-dotnet@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
-      - run: dotnet build order-flow.slnx --configuration Release
+
+      - name: Restore
+        run: dotnet restore order-flow.slnx
+
+      - name: Build
+        run: dotnet build order-flow.slnx --configuration Release --no-restore
