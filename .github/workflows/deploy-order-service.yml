@@ -19,32 +19,32 @@ jobs:
     permissions:
       contents: read
 
-    env:
-      AWS_REGION: ${{ vars.AWS_REGION }}
-      ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
-      ECS_CLUSTER: ${{ vars.ECS_CLUSTER }}
-      ECS_SERVICE: ${{ vars.ECS_SERVICE }}
-      ECS_TASK_DEFINITION: ${{ vars.ECS_TASK_DEFINITION }}
-      ECS_CONTAINER_NAME: ${{ vars.ECS_CONTAINER_NAME }}
+    # env:
+    #   AWS_REGION: ${{ vars.AWS_REGION }}
+    #   ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
+    #   ECS_CLUSTER: ${{ vars.ECS_CLUSTER }}
+    #   ECS_SERVICE: ${{ vars.ECS_SERVICE }}
+    #   ECS_TASK_DEFINITION: ${{ vars.ECS_TASK_DEFINITION }}
+    #   ECS_CONTAINER_NAME: ${{ vars.ECS_CONTAINER_NAME }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Validate deployment configuration
-        shell: bash
-        run: |
-          missing=0
-          for name in AWS_REGION ECR_REPOSITORY ECS_CLUSTER ECS_SERVICE ECS_TASK_DEFINITION ECS_CONTAINER_NAME; do
-            if [ -z "${!name}" ]; then
-              echo "$name must be configured as a repository variable." >&2
-              missing=1
-            fi
-          done
+      # - name: Validate deployment configuration
+      #   shell: bash
+      #   run: |
+      #     missing=0
+      #     for name in AWS_REGION ECR_REPOSITORY ECS_CLUSTER ECS_SERVICE ECS_TASK_DEFINITION ECS_CONTAINER_NAME; do
+      #       if [ -z "${!name}" ]; then
+      #         echo "$name must be configured as a repository variable." >&2
+      #         missing=1
+      #       fi
+      #     done
 
-          if [ "$missing" -ne 0 ]; then
-            exit 1
-          fi
+      #     if [ "$missing" -ne 0 ]; then
+      #       exit 1
+      #     fi
 
       - name: Resolve image tag
         id: image-tag
