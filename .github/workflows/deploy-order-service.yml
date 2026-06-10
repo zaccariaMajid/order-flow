@@ -20,8 +20,8 @@ jobs:
       contents: read
 
     env:
-      AWS_REGION: ${{ vars.AWS_REGION }}
-      ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      ECR_REPOSITORY: orderflow/order-service
       ECS_CLUSTER: ${{ vars.ECS_CLUSTER }}
       ECS_SERVICE: ${{ vars.ECS_SERVICE }}
       ECS_TASK_DEFINITION: ${{ vars.ECS_TASK_DEFINITION }}
@@ -31,20 +31,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # - name: Validate deployment configuration
-      #   shell: bash
-      #   run: |
-      #     missing=0
-      #     for name in AWS_REGION ECR_REPOSITORY ECS_CLUSTER ECS_SERVICE ECS_TASK_DEFINITION ECS_CONTAINER_NAME; do
-      #       if [ -z "${!name}" ]; then
-      #         echo "$name must be configured as a repository variable." >&2
-      #         missing=1
-      #       fi
-      #     done
-
-      #     if [ "$missing" -ne 0 ]; then
-      #       exit 1
-      #     fi
+      - name: Validate AWS configuration
+        shell: bash
+        run: |
+          test -n "$AWS_REGION" || (echo "AWS_REGION is empty" >&2; exit 1)
+          test -n "$ECR_REPOSITORY" || (echo "ECR_REPOSITORY is empty" >&2; exit 1)
 
       - name: Resolve image tag
         id: image-tag
@@ -89,7 +80,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Login to Amazon ECR
         id: login-ecr
