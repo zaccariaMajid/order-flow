@@ -21,6 +21,7 @@ jobs:
 
     env:
       AWS_REGION: ${{ secrets.AWS_REGION }}
+      AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
       ECR_REPOSITORY: orderflow/order-service
       ECS_CLUSTER: ${{ vars.ECS_CLUSTER }}
       ECS_SERVICE: ${{ vars.ECS_SERVICE }}
@@ -31,10 +32,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Debug AWS configuration
+        shell: bash
+        run: |
+          echo "AWS_REGION is set: $([ -n "$AWS_REGION" ] && echo yes || echo no)"
+          echo "AWS_REGION length: ${#AWS_REGION}"
+          echo "AWS_ACCOUNT_ID is set: $([ -n "$AWS_ACCOUNT_ID" ] && echo yes || echo no)"
+          echo "AWS_ACCOUNT_ID length: ${#AWS_ACCOUNT_ID}"
+          echo "ECR_REPOSITORY: $ECR_REPOSITORY"
+          echo "Git ref: $GITHUB_REF"
+          echo "Repository: $GITHUB_REPOSITORY"
+
       - name: Validate AWS configuration
         shell: bash
         run: |
           test -n "$AWS_REGION" || (echo "AWS_REGION is empty" >&2; exit 1)
+          test -n "$AWS_ACCOUNT_ID" || (echo "AWS_ACCOUNT_ID is empty" >&2; exit 1)
           test -n "$ECR_REPOSITORY" || (echo "ECR_REPOSITORY is empty" >&2; exit 1)
 
       - name: Resolve image tag
