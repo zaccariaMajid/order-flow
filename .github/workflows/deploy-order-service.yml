@@ -108,25 +108,25 @@ jobs:
           docker push "$image"
           echo "image=$image" >> "$GITHUB_OUTPUT"
 
-      # - name: Download ECS task definition
-      #   run: |
-      #     aws ecs describe-task-definition \
-      #       --task-definition "$ECS_TASK_DEFINITION" \
-      #       --query taskDefinition \
-      #       > task-definition.json
+      - name: Download ECS task definition
+        run: |
+          aws ecs describe-task-definition \
+            --task-definition "$ECS_TASK_DEFINITION" \
+            --query taskDefinition \
+            > task-definition.json
 
-      # - name: Render ECS task definition
-      #   id: task-definition
-      #   uses: aws-actions/amazon-ecs-render-task-definition@v1
-      #   with:
-      #     task-definition: task-definition.json
-      #     container-name: ${{ env.ECS_CONTAINER_NAME }}
-      #     image: ${{ steps.build-image.outputs.image }}
+      - name: Render ECS task definition
+        id: task-definition
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: ${{ env.ECS_CONTAINER_NAME }}
+          image: ${{ steps.build-image.outputs.image }}
 
-      # - name: Deploy ECS task definition
-      #   uses: aws-actions/amazon-ecs-deploy-task-definition@v2
-      #   with:
-      #     task-definition: ${{ steps.task-definition.outputs.task-definition }}
-      #     service: ${{ env.ECS_SERVICE }}
-      #     cluster: ${{ env.ECS_CLUSTER }}
-      #     wait-for-service-stability: true
+      - name: Deploy ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.task-definition.outputs.task-definition }}
+          service: ${{ env.ECS_SERVICE }}
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: true
