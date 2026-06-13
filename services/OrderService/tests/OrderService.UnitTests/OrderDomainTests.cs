@@ -3,6 +3,7 @@ using OrderService.Domain.Aggregates;
 using OrderService.Domain.Entities;
 using OrderService.Domain.Enums;
 using OrderService.Domain.Events;
+using OrderService.Domain.Exceptions;
 using OrderService.Domain.Metadata;
 using OrderService.Domain.ValueObjects;
 
@@ -29,7 +30,7 @@ public class OrderDomainTests
 
         Order order = Order.Create(CustomerId, [firstItem, secondItem], createdAt);
 
-        Assert.NotEqual(Guid.Empty, order.Id);
+        Assert.NotEqual(Guid.Empty, order.Id.Value);
         Assert.Equal(CustomerId, order.CustomerId);
         Assert.Equal(OrderStatus.Pending, order.Status);
         Assert.Equal(25, order.TotalAmount.Amount);
@@ -43,7 +44,7 @@ public class OrderDomainTests
     [Fact]
     public void Create_rejects_empty_items()
     {
-        Assert.Throws<ArgumentException>(() => Order.Create(CustomerId, [], DateTimeOffset.UtcNow));
+        Assert.Throws<EmptyOrderException>(() => Order.Create(CustomerId, [], DateTimeOffset.UtcNow));
     }
 
     [Fact]
@@ -51,7 +52,7 @@ public class OrderDomainTests
     {
         OrderItem item = CreateItem(quantity: 1, amount: 0);
 
-        Assert.Throws<InvalidOperationException>(() => Order.Create(CustomerId, [item], DateTimeOffset.UtcNow));
+        Assert.Throws<InvalidMoneyException>(() => Order.Create(CustomerId, [item], DateTimeOffset.UtcNow));
     }
 
     [Fact]
@@ -60,7 +61,7 @@ public class OrderDomainTests
         OrderItem eurItem = CreateItem(quantity: 1, amount: 10, currency: Currency.EUR);
         OrderItem usdItem = CreateItem(quantity: 1, amount: 10, currency: Currency.USD);
 
-        Assert.Throws<InvalidOperationException>(() => Order.Create(CustomerId, [eurItem, usdItem], DateTimeOffset.UtcNow));
+        Assert.Throws<InvalidMoneyException>(() => Order.Create(CustomerId, [eurItem, usdItem], DateTimeOffset.UtcNow));
     }
 
     [Fact]
@@ -75,9 +76,10 @@ public class OrderDomainTests
     public void Value_objects_validate_invalid_values()
     {
         Assert.Throws<ArgumentException>(() => new CustomerId(Guid.Empty));
+        Assert.Throws<ArgumentException>(() => new OrderId(Guid.Empty));
         Assert.Throws<ArgumentException>(() => new ProductId(Guid.Empty));
-        Assert.Throws<ArgumentOutOfRangeException>(() => new Money(-1, Currency.EUR));
-        Assert.Throws<ArgumentOutOfRangeException>(() => new Money(1, (Currency)999));
+        Assert.Throws<InvalidMoneyException>(() => new Money(-1, Currency.EUR));
+        Assert.Throws<InvalidMoneyException>(() => new Money(1, (Currency)999));
     }
 
     [Fact]
@@ -86,10 +88,9 @@ public class OrderDomainTests
         DateTimeOffset completedAt = DateTimeOffset.Parse("2026-06-08T11:00:00Z");
         Order order = CreateOrder();
 
-        order.ReserveStock();
-        order.MarkPaymentPending();
+        order.MarkStockReserved();
         order.MarkAsPaid();
-        order.MarkShippingInProgress();
+        order.StartShipping();
         order.Complete(completedAt);
 
         Assert.Equal(OrderStatus.Completed, order.Status);
@@ -109,7 +110,7 @@ public class OrderDomainTests
         Assert.Equal(cancelledAt, order.CancelledAt);
         OrderCancelled cancelled = Assert.IsType<OrderCancelled>(order.DomainEvents.Last());
         Assert.Equal("customer request", cancelled.Reason);
-        Assert.Throws<InvalidOperationException>(() => order.Complete(DateTimeOffset.UtcNow));
+        Assert.Throws<InvalidOrderStateException>(() => order.Complete(DateTimeOffset.UtcNow));
     }
 
     [Fact]
@@ -121,7 +122,7 @@ public class OrderDomainTests
 
         Assert.Equal(OrderStatus.Failed, order.Status);
         Assert.IsType<OrderFailed>(order.DomainEvents.Last());
-        Assert.Throws<InvalidOperationException>(() => order.Complete(DateTimeOffset.UtcNow));
+        Assert.Throws<InvalidOrderStateException>(() => order.Complete(DateTimeOffset.UtcNow));
     }
 
     [Fact]
@@ -129,8 +130,8 @@ public class OrderDomainTests
     {
         Order order = CreateOrder();
 
-        Assert.Throws<InvalidOperationException>(() => order.MarkAsPaid());
-        Assert.Throws<InvalidOperationException>(() => order.Complete(DateTimeOffset.UtcNow));
+        Assert.Throws<InvalidOrderStateException>(() => order.MarkAsPaid());
+        Assert.Throws<InvalidOrderStateException>(() => order.Complete(DateTimeOffset.UtcNow));
     }
 
     private static Order CreateOrder() => Order.Create(CustomerId, [CreateItem()], DateTimeOffset.UtcNow);

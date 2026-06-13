@@ -1,9 +1,10 @@
 using BuildingBlocks.Domain;
+using OrderService.Domain.ValueObjects;
 
 namespace OrderService.Domain.Events;
 
 public sealed record OrderCompleted(
-    Guid OrderId,
+    OrderId OrderId,
     DateTimeOffset OccurredAt) : IDomainEvent
 {
     public Guid Id { get; } = Guid.NewGuid();

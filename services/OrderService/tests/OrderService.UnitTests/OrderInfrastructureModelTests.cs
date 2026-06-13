@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using OrderService.Domain.Aggregates;
 using OrderService.Domain.Entities;
+using OrderService.Domain.ValueObjects;
 using OrderService.Infrastructure.Outbox;
 using OrderService.Infrastructure.Persistence;
 
@@ -18,9 +19,10 @@ public class OrderInfrastructureModelTests
 
         Assert.Equal("orders", order.GetTableName());
         Assert.Equal("order_items", item.GetTableName());
+        Assert.Equal(typeof(OrderId), order.FindProperty(nameof(Order.Id))?.ClrType);
         Assert.Null(order.FindProperty(nameof(Order.DomainEvents)));
         Assert.NotNull(order.FindNavigation(nameof(Order.Items)));
-        Assert.NotNull(item.FindProperty("OrderId"));
+        Assert.Equal(typeof(OrderId), item.FindProperty("OrderId")?.ClrType);
     }
 
     [Fact]

@@ -2,6 +2,7 @@ using BuildingBlocks.Domain;
 using OrderService.Domain.Entities;
 using OrderService.Domain.Enums;
 using OrderService.Domain.Events;
+using OrderService.Domain.Exceptions;
 using OrderService.Domain.ValueObjects;
 
 namespace OrderService.Domain.Aggregates;
@@ -18,7 +19,7 @@ public sealed class Order
         TotalAmount = null!;
     }
 
-    private Order(Guid id, CustomerId customerId, List<OrderItem> items, Money totalAmount, DateTimeOffset createdAt)
+    private Order(OrderId id, CustomerId customerId, List<OrderItem> items, Money totalAmount, DateTimeOffset createdAt)
     {
         Id = id;
         CustomerId = customerId;
@@ -28,7 +29,7 @@ public sealed class Order
         Status = OrderStatus.Pending;
     }
 
-    public Guid Id { get; private set; }
+    public OrderId Id { get; private set; }
 
     public CustomerId CustomerId { get; private set; }
 
@@ -53,43 +54,36 @@ public sealed class Order
         List<OrderItem> orderItems = items.ToList();
         if (orderItems.Count == 0)
         {
-            throw new ArgumentException("An order must contain at least one item.", nameof(items));
+            throw new EmptyOrderException();
         }
 
         Money totalAmount = CalculateTotal(orderItems);
         if (totalAmount.Amount <= 0)
         {
-            throw new InvalidOperationException("Total amount must be greater than zero.");
+            throw new InvalidMoneyException("Total amount must be greater than zero.");
         }
 
-        Order order = new(Guid.NewGuid(), customerId, orderItems, totalAmount, createdAt);
+        Order order = new(OrderId.New(), customerId, orderItems, totalAmount, createdAt);
         order.AddDomainEvent(new OrderCreated(order.Id, order.CustomerId, order.Items, order.TotalAmount, createdAt));
 
         return order;
     }
 
-    public void ReserveStock()
+    public void MarkStockReserved()
     {
         EnsureTransitionFrom(OrderStatus.Pending);
 
         Status = OrderStatus.StockReserved;
     }
 
-    public void MarkPaymentPending()
-    {
-        EnsureTransitionFrom(OrderStatus.StockReserved);
-
-        Status = OrderStatus.PaymentPending;
-    }
-
     public void MarkAsPaid()
     {
-        EnsureTransitionFrom(OrderStatus.PaymentPending);
+        EnsureTransitionFrom(OrderStatus.StockReserved);
 
         Status = OrderStatus.Paid;
     }
 
-    public void MarkShippingInProgress()
+    public void StartShipping()
     {
         EnsureTransitionFrom(OrderStatus.Paid);
 
@@ -146,7 +140,7 @@ public sealed class Order
 
         if (Status != expectedStatus)
         {
-            throw new InvalidOperationException($"Order cannot transition from {Status} when {expectedStatus} is required.");
+            throw new InvalidOrderStateException($"Order cannot transition from {Status} when {expectedStatus} is required.");
         }
     }
 
@@ -154,7 +148,7 @@ public sealed class Order
     {
         if (Status is OrderStatus.Completed or OrderStatus.Cancelled or OrderStatus.Failed)
         {
-            throw new InvalidOperationException($"Order in {Status} status cannot be changed.");
+            throw new InvalidOrderStateException($"Order in {Status} status cannot be changed.");
         }
     }
 

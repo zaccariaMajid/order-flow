@@ -4,10 +4,9 @@ public enum OrderStatus
 {
     Pending = 1,
     StockReserved = 2,
-    PaymentPending = 3,
-    Paid = 4,
-    ShippingInProgress = 5,
-    Completed = 6,
-    Cancelled = 7,
-    Failed = 8
+    Paid = 3,
+    ShippingInProgress = 4,
+    Completed = 5,
+    Cancelled = 6,
+    Failed = 7
 }

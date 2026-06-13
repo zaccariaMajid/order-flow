@@ -5,7 +5,7 @@ using OrderService.Domain.ValueObjects;
 namespace OrderService.Domain.Events;
 
 public sealed record OrderCreated(
-    Guid OrderId,
+    OrderId OrderId,
     CustomerId CustomerId,
     IReadOnlyCollection<OrderItem> Items,
     Money TotalAmount,

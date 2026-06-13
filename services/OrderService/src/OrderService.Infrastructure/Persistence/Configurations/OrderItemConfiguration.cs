@@ -16,7 +16,10 @@ public sealed class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
         builder.Property(item => item.Id)
             .HasColumnName("id");
 
-        builder.Property<Guid>("OrderId")
+        builder.Property<OrderId>("OrderId")
+            .HasConversion(
+                orderId => orderId.Value,
+                value => new OrderId(value))
             .HasColumnName("order_id")
             .IsRequired();
 

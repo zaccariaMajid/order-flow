@@ -16,6 +16,9 @@ public sealed class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.HasKey(order => order.Id);
 
         builder.Property(order => order.Id)
+            .HasConversion(
+                orderId => orderId.Value,
+                value => new OrderId(value))
             .HasColumnName("id");
 
         builder.Property(order => order.CustomerId)
