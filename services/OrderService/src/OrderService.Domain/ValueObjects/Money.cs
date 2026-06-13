@@ -1,4 +1,5 @@
 using OrderService.Domain.Enums;
+using OrderService.Domain.Exceptions;
 
 namespace OrderService.Domain.ValueObjects;
 
@@ -8,12 +9,12 @@ public sealed record Money
     {
         if (amount < 0)
         {
-            throw new ArgumentOutOfRangeException(nameof(amount), "Amount cannot be negative.");
+            throw new InvalidMoneyException("Amount cannot be negative.");
         }
 
         if (!Enum.IsDefined(currency))
         {
-            throw new ArgumentOutOfRangeException(nameof(currency), "Currency must be specified.");
+            throw new InvalidMoneyException("Currency must be specified.");
         }
 
         Amount = amount;
@@ -48,7 +49,7 @@ public sealed record Money
     {
         if (Currency != other.Currency)
         {
-            throw new InvalidOperationException("Cannot operate on money values with different currencies.");
+            throw new InvalidMoneyException("Cannot operate on money values with different currencies.");
         }
     }
 }

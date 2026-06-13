@@ -1,9 +1,10 @@
 using BuildingBlocks.Domain;
+using OrderService.Domain.ValueObjects;
 
 namespace OrderService.Domain.Events;
 
 public sealed record OrderCancelled(
-    Guid OrderId,
+    OrderId OrderId,
     string Reason,
     DateTimeOffset OccurredAt) : IDomainEvent
 {
