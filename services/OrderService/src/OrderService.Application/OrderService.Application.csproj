@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
     <ProjectReference Include="..\OrderService.Domain\OrderService.Domain.csproj" />
     <ProjectReference Include="..\OrderService.Contracts\OrderService.Contracts.csproj" />
     <ProjectReference Include="..\..\..\..\shared\BuildingBlocks\Application\BuildingBlocks.Application.csproj" />

@@ -1,6 +1,9 @@
 using BuildingBlocks.Api;
 using System.Diagnostics;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using OrderService.Application.Orders.Create;
+using OrderService.Application.Orders.GetById;
 using OrderService.Infrastructure;
 using OrderService.Infrastructure.Persistence;
 
@@ -8,6 +11,9 @@ var builder = WebApplication.CreateBuilder(args);
 var serviceName = "OrderService";
 
 builder.Services.AddOpenApi();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateOrderCommandValidator>();
+builder.Services.AddScoped<CreateOrderHandler>();
+builder.Services.AddScoped<GetOrderByIdHandler>();
 builder.Services.AddOrderInfrastructure(builder.Configuration);
 var app = builder.Build();
 var loggerFactory = app.Services.GetRequiredService<ILoggerFactory>();
@@ -131,6 +137,62 @@ app.MapGet("/health/db", async (OrderDbContext dbContext, CancellationToken canc
     })
     .WithName("GetDatabaseHealth");
 
+app.MapPost("/orders", async (
+        CreateOrderRequest request,
+        IValidator<CreateOrderCommand> validator,
+        CreateOrderHandler handler,
+        CancellationToken cancellationToken) =>
+    {
+        CreateOrderCommand command = request.ToCommand();
+        FluentValidation.Results.ValidationResult validationResult =
+            await validator.ValidateAsync(command, cancellationToken);
+
+        if (!validationResult.IsValid)
+        {
+            return Results.ValidationProblem(validationResult.ToDictionary());
+        }
+
+        CreateOrderResult result = await handler.HandleAsync(command, cancellationToken);
+
+        return Results.Created($"/orders/{result.OrderId}", new CreateOrderResponse(result.OrderId));
+    })
+    .WithName("CreateOrder");
+
+app.MapGet("/orders/{id}", async (
+        string id,
+        GetOrderByIdHandler handler,
+        CancellationToken cancellationToken) =>
+    {
+        if (!Guid.TryParse(id, out Guid orderId) || orderId == Guid.Empty)
+        {
+            return Results.BadRequest(new { Error = "Order id must be a valid GUID." });
+        }
+
+        OrderDetailsDto? order = await handler.HandleAsync(new GetOrderByIdQuery(orderId), cancellationToken);
+
+        return order is null
+            ? Results.NotFound()
+            : Results.Ok(order);
+    })
+    .WithName("GetOrderById");
+
 startupLogger.LogInformation("{ServiceName} started", serviceName);
 
 app.Run();
+
+internal sealed record CreateOrderRequest(Guid CustomerId, IReadOnlyCollection<CreateOrderItemRequest> Items)
+{
+    public CreateOrderCommand ToCommand() =>
+        new(
+            CustomerId,
+            (Items ?? []).Select(item => new CreateOrderItem(
+                    item.ProductId,
+                    item.ProductName ?? string.Empty,
+                    item.Quantity,
+                    item.UnitPrice))
+                .ToArray());
+}
+
+internal sealed record CreateOrderItemRequest(Guid ProductId, string? ProductName, int Quantity, decimal UnitPrice);
+
+internal sealed record CreateOrderResponse(Guid OrderId);

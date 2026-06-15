@@ -1,7 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using OrderService.Application.Orders.Persistence;
+using OrderService.Domain.Repositories;
 using OrderService.Infrastructure.Persistence;
+using OrderService.Infrastructure.Persistence.Repositories;
 
 namespace OrderService.Infrastructure;
 
@@ -29,6 +32,10 @@ public static class DependencyInjection
                         errorCodesToAdd: null);
                 });
         });
+
+        services.AddScoped<IOrderRepository, OrderRepository>();
+        services.AddScoped<IOrderUnitOfWork, OrderUnitOfWork>();
+        services.AddScoped<IOrderReadStore, OrderReadStore>();
 
         return services;
     }
